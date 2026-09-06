@@ -1,0 +1,1 @@
+export type AccountStatementRow={movement_seq:number;institution_id:string;event_at:string;movement_type:string;reference_no:string|null;description:string;debit_amount:number;credit_amount:number;transfer_amount:number;balance_effect:number;running_balance:number;order_id:string|null;payment_id:string|null;allocation_id:string|null}
