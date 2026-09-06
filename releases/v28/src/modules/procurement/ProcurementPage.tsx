@@ -1,0 +1,14 @@
+import { useState } from 'react'
+import type { OpenProcurementItem, ProcurementNeed } from './types'
+import { createProcurementForExam, receiveProcurementItem } from './service'
+
+export function ProcurementPage({rows,openItems,onRefresh}:{rows:ProcurementNeed[];openItems:OpenProcurementItem[];onRefresh:()=>Promise<void>}){
+ const [busy,setBusy]=useState<string|null>(null); const [receipt,setReceipt]=useState<OpenProcurementItem|null>(null); const [qty,setQty]=useState('')
+ const run=async(id:string,fn:()=>Promise<void>)=>{try{setBusy(id);await fn();await onRefresh()}finally{setBusy(null)}}
+ return <section><div className="page-title"><div><h1>Satınalma</h1><p>Onaylanan siparişlere göre satınalma ihtiyacı ve ürün geliş takibi.</p></div></div>
+ <div className="cards"><div className="kpi"><span>Satınalma İhtiyacı</span><b>{rows.filter(r=>r.need_to_buy>0).length}</b></div><div className="kpi"><span>Açık Satınalma Kalemi</span><b>{openItems.length}</b></div></div>
+ <h2>İhtiyaç Listesi</h2><div className="table-wrap"><table><thead><tr><th>Yayın / Deneme</th><th>Onaylı İhtiyaç</th><th>Alınan</th><th>Gelen</th><th>Alınacak</th><th>Durum</th><th></th></tr></thead><tbody>{rows.map(r=><tr key={r.exam_id}><td><b>{r.publisher}</b><small>{r.exam_name}</small></td><td>{r.approved_need}</td><td>{r.procured_quantity}</td><td>{r.received_quantity}</td><td>{r.need_to_buy}</td><td>{r.need_to_buy>0?'Satınalma gerekli':r.received_quantity>=r.approved_need?'Ürün yeterli':'Ürün bekleniyor'}</td><td>{r.need_to_buy>0&&<button disabled={busy===r.exam_id} onClick={()=>run(r.exam_id,()=>createProcurementForExam(r.exam_id,r.need_to_buy))}>Satınalma Oluştur</button>}</td></tr>)}</tbody></table></div>
+ <h2>Açık Satınalmalar / Ürün Gelişi</h2><div className="table-wrap"><table><thead><tr><th>Deneme</th><th>Sipariş</th><th>Gelen</th><th>Kalan</th><th></th></tr></thead><tbody>{openItems.map(x=><tr key={x.procurement_item_id}><td>{x.exam_name}</td><td>{x.ordered_quantity}</td><td>{x.received_quantity}</td><td>{Math.max(0,x.ordered_quantity-x.received_quantity)}</td><td><button onClick={()=>{setReceipt(x);setQty(String(Math.max(0,x.ordered_quantity-x.received_quantity)))}}>Ürün Geldi</button></td></tr>)}{!openItems.length&&<tr><td colSpan={5}>Açık satınalma bulunmuyor.</td></tr>}</tbody></table></div>
+ {receipt&&<div className="modal-backdrop"><div className="modal"><h3>Ürün Gelişi Kaydı</h3><p>{receipt.exam_name}</p><label>Gelen Adet<input type="number" min="1" value={qty} onChange={e=>setQty(e.target.value)}/></label><div className="modal-actions"><button onClick={()=>setReceipt(null)}>Vazgeç</button><button disabled={!Number(qty)||busy===receipt.procurement_item_id} onClick={()=>run(receipt.procurement_item_id,()=>receiveProcurementItem(receipt.procurement_item_id,Number(qty))).then(()=>setReceipt(null))}>Mal Kabulü Kaydet</button></div></div></div>}
+ </section>
+}
