@@ -1,5 +1,8 @@
 import { supabase } from '../../lib/supabase'
 
+type OfferInput={institutionId:string;examId:string;quantity:number;unitPrice:number;validUntil?:string|null;notes?:string|null}
+type OrderInput={institutionId:string;examId:string;quantity:number;unitPrice?:number|null;notes?:string|null;overrideReason?:string|null}
+
 export async function loadOfferOrderCenter(){
   const [orders, offers, exams, institutions] = await Promise.all([
     supabase.from('order_management_board').select('*').order('order_date',{ascending:false}),
@@ -11,8 +14,9 @@ export async function loadOfferOrderCenter(){
   return {orders:orders.data??[],offers:offers.data??[],exams:exams.data??[],institutions:institutions.data??[]}
 }
 
-export async function createOrder(institutionId:string,examId:string,quantity:number,notes?:string,overrideReason?:string){
- const {data,error}=await supabase.rpc('create_order_item_v2',{p_institution_id:institutionId,p_exam_id:examId,p_quantity:quantity,p_notes:notes||null,p_admin_override_reason:overrideReason||null})
+export async function createOrder(a:string|OrderInput,b?:string,c?:number,d?:string,e?:string){
+ const input:OrderInput=typeof a==='string'?{institutionId:a,examId:b!,quantity:c!,notes:d||null,overrideReason:e||null}:a
+ const {data,error}=await supabase.rpc('create_order_item_v2',{p_institution_id:input.institutionId,p_exam_id:input.examId,p_quantity:input.quantity,p_notes:input.notes||null,p_admin_override_reason:input.overrideReason||null,p_unit_price:input.unitPrice??null})
  if(error) throw error; return data
 }
 export async function updateOrderQuantity(itemId:string,quantity:number,overrideReason?:string){
@@ -22,4 +26,5 @@ export async function updateOrderQuantity(itemId:string,quantity:number,override
 export async function approveOrder(orderId:string){const{data,error}=await supabase.rpc('admin_approve_order_v1',{p_order_id:orderId});if(error)throw error;return data}
 export async function rejectOrder(orderId:string,reason:string){const{data,error}=await supabase.rpc('admin_reject_order_v1',{p_order_id:orderId,p_reason:reason});if(error)throw error;return data}
 export async function convertOfferToOrder(offerId:string,overrideReason?:string){const{data,error}=await supabase.rpc('convert_offer_to_order_v1',{p_offer_id:offerId,p_admin_override_reason:overrideReason||null});if(error)throw error;return data}
-export async function createOffer(institutionId:string,examId:string,quantity:number,unitPrice:number,validUntil?:string,notes?:string){const{data,error}=await supabase.rpc('create_offer_v1',{p_institution_id:institutionId,p_exam_id:examId,p_quantity:quantity,p_unit_price:unitPrice,p_valid_until:validUntil||null,p_notes:notes||null});if(error)throw error;return data}
+export async function createOffer(a:string|OfferInput,b?:string,c?:number,d?:number,e?:string,f?:string){const input:OfferInput=typeof a==='string'?{institutionId:a,examId:b!,quantity:c!,unitPrice:d!,validUntil:e||null,notes:f||null}:a;const{data,error}=await supabase.rpc('create_offer_v1',{p_institution_id:input.institutionId,p_exam_id:input.examId,p_quantity:input.quantity,p_unit_price:input.unitPrice,p_valid_until:input.validUntil||null,p_notes:input.notes||null});if(error)throw error;return data}
+export async function rejectOffer(offerId:string,reason?:string){const{error}=await supabase.from('offers').update({status:'reddedildi',notes:reason||null}).eq('id',offerId);if(error)throw error}
