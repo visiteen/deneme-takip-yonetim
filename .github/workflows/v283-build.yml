@@ -1,0 +1,19 @@
+name: V28.3 Integration Build
+on:
+  push:
+    branches: [v28.3-build]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install
+        working-directory: releases/v28.3
+        run: npm install --no-audit --no-fund
+      - name: Build
+        working-directory: releases/v28.3
+        run: npm run build
