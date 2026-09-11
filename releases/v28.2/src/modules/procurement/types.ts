@@ -1,0 +1,26 @@
+export type ProcurementNeed={exam_id:string;exam_code:string;publisher:string;exam_name:string;grade_level:string;exam_type:string;application_date:string;last_order_date:string;target_delivery_date:string|null;physical_stock:number;reserved_stock:number;available_stock:number;open_procurement_qty:number;gross_shortage_qty:number;procurement_need_qty:number;procurement_state:'satinalma_gerekli'|'satinalma_acik'|'stok_yeterli'}
+
+export type OpenProcurementItem = {
+  id: string
+  ordered_quantity: number
+  received_quantity: number
+  procurements: {
+    id: string
+    procurement_no: string
+    publisher: string
+    status: 'taslak'|'siparis_verildi'|'kismi_mal_kabul'|'tamamlandi'|'iptal'
+    order_date: string | null
+    expected_receipt_date: string | null
+    notes?: string | null
+  }
+  exams: {
+    id: string
+    exam_code: string
+    publisher: string
+    exam_name: string
+    grade_level: string
+    exam_type: string
+    application_date?: string | null
+    target_delivery_date?: string | null
+  }
+}
