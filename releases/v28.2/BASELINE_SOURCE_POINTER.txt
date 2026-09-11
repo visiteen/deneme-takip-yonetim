@@ -1,0 +1,1 @@
+V28.2 düzeltmeleri V28.1 kaynak tabanı üzerinden yürütülecektir. Kaynak kopyası korunarak entegrasyon hataları ayrı sürümde giderilecektir.
