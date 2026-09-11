@@ -1,0 +1,1 @@
+CI gerçek build çalıştırıldı. İlk derleme; executive-finance tip eşleşmeleri, offer/institution/smart-alert servis fonksiyon adları, kurum portalı/veri/sistem yönetimi eksik kaynakları, Supabase env tipi, Admin Onay total_amount ve Satınalma servis/tip eşleşmelerinde hatalar verdi. Bu liste V28.2 entegrasyon düzeltmelerinin başlangıç kaydıdır.
