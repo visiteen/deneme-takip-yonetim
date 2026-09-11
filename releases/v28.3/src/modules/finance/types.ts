@@ -1,0 +1,1 @@
+export type FinanceOrder={order_id:string;order_no:string;institution_id:string;institution_code:string;institution_name:string;order_date:string;order_status:string;admin_approval:string;total_amount:number;paid_amount:number;remaining_amount:number;last_payment_date:string|null;payment_status:'odenmedi'|'kismi'|'odendi'}

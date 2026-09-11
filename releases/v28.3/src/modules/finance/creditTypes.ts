@@ -1,0 +1,2 @@
+export type InstitutionCredit={institution_id:string;institution_code:string;institution_name:string;institution_receipts:number;allocated_amount:number;available_credit:number}
+export type InstitutionCreditReceipt={payment_id:string;payment_no:string;institution_id:string;institution_name:string;amount:number;allocated_amount:number;available_amount:number;payment_date:string;payment_method:string|null;reference_no:string|null;notes:string|null}

@@ -1,0 +1,1 @@
+export type CashflowProjection={horizon_days:number;expected_collections:number;expected_payments:number;projected_net_cash:number};export type CashflowItem={flow_date:string;flow_type:string;institution_id:string|null;supplier_id:string|null;order_id:string|null;supplier_payment_id:string|null;amount:number;counterparty:string;reference_no:string;status:string}
