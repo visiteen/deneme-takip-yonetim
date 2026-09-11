@@ -1,0 +1,1 @@
+export type DispatchOperation={id:string;order_id:string;status:string;planned_delivery_date:string|null;delivery_method:string|null;tracking_no:string|null;shipped_at:string|null;delivered_at:string|null;notes:string|null}
