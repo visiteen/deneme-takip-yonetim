@@ -1,0 +1,31 @@
+name: V28.2 Overlay Build
+
+on:
+  push:
+    branches: [v28.1-preview]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Prepare merged source
+        run: |
+          rm -rf /tmp/v282
+          mkdir -p /tmp/v282
+          cp -R releases/v28.1/. /tmp/v282/
+          if [ -d releases/v28.2/src ]; then
+            cp -R releases/v28.2/src/. /tmp/v282/src/
+          fi
+      - name: Install
+        working-directory: /tmp/v282
+        run: npm install --no-audit --no-fund
+      - name: Build
+        working-directory: /tmp/v282
+        run: npm run build
