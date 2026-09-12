@@ -1,0 +1,43 @@
+name: V28.5 Production Package
+
+on:
+  push:
+    branches: [v28.1-preview]
+  workflow_dispatch:
+
+jobs:
+  build-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Prepare merged production source
+        run: |
+          rm -rf /tmp/deneme-production
+          mkdir -p /tmp/deneme-production
+          cp -R releases/v28.1/. /tmp/deneme-production/
+          if [ -d releases/v28.2/src ]; then cp -R releases/v28.2/src/. /tmp/deneme-production/src/; fi
+          if [ -d releases/v28.3/src ]; then cp -R releases/v28.3/src/. /tmp/deneme-production/src/; fi
+          if [ -d releases/v28.4/src ]; then cp -R releases/v28.4/src/. /tmp/deneme-production/src/; fi
+      - name: Install dependencies
+        working-directory: /tmp/deneme-production
+        run: npm install --no-audit --no-fund
+      - name: Production build
+        working-directory: /tmp/deneme-production
+        run: npm run build
+      - name: Package production artifact
+        run: |
+          cp -R /tmp/deneme-production/dist ./production-dist
+          printf '%s\n' 'Deneme Takip Yönetim Sistemi - V28.5 Production Build' > production-dist/BUILD_INFO.txt
+          printf '%s\n' "commit=${GITHUB_SHA}" >> production-dist/BUILD_INFO.txt
+      - name: Upload production artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deneme-takip-production-dist
+          path: production-dist
+          if-no-files-found: error
+          retention-days: 30
